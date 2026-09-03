@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprende los Verbos Regulares - Rompecabezas Interactivo</title>
+  <style>
+    :root {
+      --bg-color: #5b9e73;
+      --card-bg: #f9f6e5;
+      --text-main: #1f2937;
+      --yellow-piece: #facc15;
+      --yellow-border: #eab308;
+      --green-piece: #22c55e;
+      --green-border: #15803d;
+      --pronoun-color: #d9381e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background-color: var(--card-bg);
+      border-radius: 24px;
+      padding: 25px 35px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    /* Encabezado y Selector */
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .selector-box {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #374151;
+    }
+
+    select {
+      padding: 10px 18px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 12px;
+      border: 3px solid #d1d5db;
+      background-color: #ffffff;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    select:hover, select:focus {
+      border-color: var(--bg-color);
+    }
+
+    /* Barra de Progreso */
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background-color: #e5e7eb;
+      border-radius: 10px;
+      margin: 15px 0 25px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--green-piece);
+      transition: width 0.3s ease;
+    }
+
+    /* Grid de Conjugaciones */
+    .conjugation-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 180px 1fr auto;
+      align-items: center;
+      gap: 15px;
+      background-color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .row.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pronoun {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--pronoun-color);
+    }
+
+    /* SVG del Rompecabezas */
+    .puzzle-box {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .puzzle-svg {
+      display: block;
+      overflow: visible;
+      filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15));
+      transition: transform 0.2s ease;
+    }
+
+    .puzzle-box:hover .puzzle-svg {
+      transform: scale(1.02);
+    }
+
+    .text-stem {
+      fill: #1f2937;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      dominant-baseline: central;
+      text-anchor: middle;
+    }
+
+    .text-ending {
+      fill: #ffffff;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      dominant-baseline: central;
+      text-anchor: middle;
+      transition: opacity 0.3s ease;
+    }
+
+    .text-hidden {
+      opacity: 0;
+    }
+
+    /* Botón de Audio */
+    .audio-btn {
+      background: #f3f4f6;
+      border: 2px solid #e5e7eb;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+    }
+
+    .audio-btn:hover {
+      background-color: var(--yellow-piece);
+      border-color: var(--yellow-border);
+      transform: scale(1.1);
+    }
+
+    /* Flechas Navegación Flotantes */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #ffffff;
+      color: var(--text-main);
+      border: 3px solid var(--text-main);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      transition: all 0.2s ease;
+      z-index: 99;
+    }
+
+    .nav-arrow:hover:not(:disabled) {
+      background-color: var(--text-main);
+      color: #ffffff;
+      transform: translateY(-50%) scale(1.15);
+    }
+
+    .nav-arrow:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+      border-color: #ccc;
+    }
+
+    .nav-arrow.prev { left: 20px; }
+    .nav-arrow.next { right: 20px; }
+
+    @media (max-width: 768px) {
+      .row { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+      .nav-arrow { position: static; transform: none; width: 50px; height: 50px; }
+      .mobile-nav { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="nav-arrow prev" id="prevBtn" onclick="changeRow(-1)" disabled>&#10094;</button>
+  <button class="nav-arrow next" id="nextBtn" onclick="changeRow(1)">&#10095;</button>
+
+  <div class="container">
+    <header>
+      <h1>Conjugador Interactivo</h1>
+      <div class="selector-box">
+        <label for="verbSelect">Selecciona un verbo:</label>
+        <select id="verbSelect" onchange="loadVerb()"></select>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </header>
+
+    <div class="conjugation-grid" id="conjugationGrid"></div>
+  </div>
+
+  <script>
+    // Lista completa de verbos clasificados por su terminación (extraídos de la imagen)
+    const verbos = [
+      { verbo: "ESTUDIAR", tipo: "AR", raiz: "estudi" },
+      { verbo: "ENSEÑAR", tipo: "AR", raiz: "enseñ" },
+      { verbo: "APRENDER", tipo: "ER", raiz: "aprend" },
+      { verbo: "NECESITAR", tipo: "AR", raiz: "necesit" },
+      { verbo: "BEBER", tipo: "ER", raiz: "beb" },
+      { verbo: "TOMAR", tipo: "AR", raiz: "tom" },
+      { verbo: "COMPRAR", tipo: "AR", raiz: "compr" },
+      { verbo: "VENDER", tipo: "ER", raiz: "vend" },
+      { verbo: "ESCRIBIR", tipo: "IR", raiz: "escrib" },
+      { verbo: "ROMPER", tipo: "ER", raiz: "romp" },
+      { verbo: "DECIDIR", tipo: "IR", raiz: "decid" },
+      { verbo: "OLVIDAR", tipo: "AR", raiz: "olvid" },
+      { verbo: "AYUDAR", tipo: "AR", raiz: "ayud" },
+      { verbo: "CANTAR", tipo: "AR", raiz: "cant" },
+      { verbo: "BUSCAR", tipo: "AR", raiz: "busc" },
+      { verbo: "DESAYUNAR", tipo: "AR", raiz: "desayun" },
+      { verbo: "ESPERAR", tipo: "AR", raiz: "esper" },
+      { verbo: "LLAMAR", tipo: "AR", raiz: "llam" },
+      { verbo: "VIAJAR", tipo: "AR", raiz: "viaj" },
+      { verbo: "BAILAR", tipo: "AR", raiz: "bail" },
+      { verbo: "COCINAR", tipo: "AR", raiz: "cocin" },
+      { verbo: "LEER", tipo: "ER", raiz: "le" },
+      { verbo: "PARTIR", tipo: "IR", raiz: "part" },
+      { verbo: "PAGAR", tipo: "AR", raiz: "pag" }
+    ];
+
+    const pronombres = ["Yo", "Tú", "Él / Ella / Usted", "Nosotros/as", "Vosotros/as", "Ellos / Ellas / Ustedes"];
+
+    const terminaciones = {
+      AR: ["-o", "-as", "-a", "-amos", "-áis", "-an"],
+      ER: ["-o", "-es", "-e", "-emos", "-éis", "-en"],
+      IR: ["-o", "-es", "-e", "-imos", "-ís", "-en"]
+    };
+
+    let currentRow = -1;
+    let currentVerbObj = verbos[0];
+
+    // Inicializar desplegable
+    const selectEl = document.getElementById('verbSelect');
+    verbos.forEach((v, index) => {
+      const opt = document.createElement('option');
+      opt.value = index;
+      opt.textContent = `${v.verbo} (-${v.tipo})`;
+      selectEl.appendChild(opt);
+    });
+
+    function loadVerb() {
+      const index = selectEl.value;
+      currentVerbObj = verbos[index];
+      currentRow = -1;
+      buildGrid();
+      updateVisibility();
+    }
+
+    function buildGrid() {
+      const grid = document.getElementById('conjugationGrid');
+      grid.innerHTML = '';
+
+      pronombres.forEach((pronombre, i) => {
+        const ending = terminaciones[currentVerbObj.tipo][i];
+        const fullWord = currentVerbObj.raiz + ending.replace('-', '');
+
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.row = i;
+
+        row.innerHTML = `
+          <div class="pronoun">${pronombre}</div>
+          <div class="puzzle-box" onclick="togglePiece(${i})">
+            <svg class="puzzle-svg" width="260" height="55" viewBox="0 0 260 55">
+              <path d="M 5,5 L 120,5 
+                       C 120,15 135,15 135,5 
+                       L 145,5 
+                       A 5,5 0 0,1 150,10 
+                       L 150,20 
+                       C 162,20 162,35 150,35 
+                       L 150,45 
+                       A 5,5 0 0,1 145,50 
+                       L 5,50 
+                       A 5,5 0 0,1 0,45 
+                       L 0,10 
+                       A 5,5 0 0,1 5,5 Z" 
+                    fill="#facc15" stroke="#eab308" stroke-width="2"/>
+              <text x="65" y="28" class="text-stem">${currentVerbObj.raiz}-</text>
+
+              <path d="M 145,5 L 250,5 
+                       A 5,5 0 0,1 255,10 
+                       L 255,45 
+                       A 5,5 0 0,1 250,50 
+                       L 145,50 
+                       A 5,5 0 0,1 140,45 
+                       L 140,35 
+                       C 152,35 152,20 140,20 
+                       L 140,10 
+                       A 5,5 0 0,1 145,5 Z" 
+                    fill="#22c55e" stroke="#15803d" stroke-width="2"/>
+              <text x="195" y="28" class="text-ending text-hidden" id="ending-${i}">${ending}</text>
+            </svg>
+          </div>
+          <button class="audio-btn" title="Escuchar pronunciación" onclick="speak('${pronombre} ${fullWord}')">🔊</button>
+        `;
+        grid.appendChild(row);
+      });
+    }
+
+    function togglePiece(index) {
+      const endingText = document.getElementById(`ending-${index}`);
+      endingText.classList.toggle('text-hidden');
+    }
+
+    function changeRow(dir) {
+      if (dir === 1 && currentRow < pronombres.length - 1) {
+        currentRow++;
+      } else if (dir === -1 && currentRow >= 0) {
+        // Ocultar la terminación al retroceder
+        const endingText = document.getElementById(`ending-${currentRow}`);
+        if(endingText) endingText.classList.add('text-hidden');
+        currentRow--;
+      }
+      updateVisibility();
+    }
+
+    function updateVisibility() {
+      pronombres.forEach((_, i) => {
+        const row = document.querySelector(`.row[data-row="${i}"]`);
+        if (i <= currentRow) {
+          row.classList.add('visible');
+        } else {
+          row.classList.remove('visible');
+        }
+      });
+
+      // Actualizar flechas
+      document.getElementById('prevBtn').disabled = (currentRow === -1);
+      document.getElementById('nextBtn').disabled = (currentRow === pronombres.length - 1);
+
+      // Actualizar Barra de Progreso
+      const pct = currentRow < 0 ? 0 : ((currentRow + 1) / pronombres.length) * 100;
+      document.getElementById('progressBar').style.width = `${pct}%`;
+    }
+
+    // Pronunciación con API de Voz integrada en navegadores
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Cargar primer verbo al iniciar
+    loadVerb();
+  </script>
+
+</body>
+</html>
