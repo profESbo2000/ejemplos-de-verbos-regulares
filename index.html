@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aprende los Verbos Regulares - Rompecabezas Interactivo</title>
+  <title>Mesa de Verbos Regulares - Rompecabezas Interactivo</title>
   <style>
     :root {
-      --bg-color: #5b9e73;
-      --card-bg: #f9f6e5;
+      --table-bg: #3a5a40;
+      --card-bg: #fdfbf7;
       --text-main: #1f2937;
       --yellow-piece: #facc15;
       --yellow-border: #eab308;
@@ -24,140 +24,156 @@
     }
 
     body {
-      background-color: var(--bg-color);
+      background-color: var(--table-bg);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 900px;
-      background-color: var(--card-bg);
-      border-radius: 24px;
-      padding: 25px 35px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    }
-
-    /* Encabezado y Selector */
-    header {
-      text-align: center;
-      margin-bottom: 20px;
+      color: var(--text-main);
     }
 
     h1 {
-      font-size: 2rem;
-      color: var(--text-main);
+      text-align: center;
+      color: #ffffff;
+      margin-bottom: 5px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      font-size: 1.8rem;
     }
 
-    .selector-box {
-      margin-top: 15px;
+    .subtitle {
+      text-align: center;
+      color: #dad7cd;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+    }
+
+    /* CONTENEDOR PRINCIPAL: MESA Y CONJUGACIÓN */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* MESA DE PAPELES DESPERDIGADOS */
+    .desk-area {
+      background-color: #a3b18a;
+      border: 4px solid #588157;
+      border-radius: 20px;
+      padding: 20px;
+      min-height: 550px;
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
       flex-wrap: wrap;
+      gap: 12px;
+      align-content: flex-start;
+      justify-content: center;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
     }
 
-    label {
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #374151;
-    }
-
-    select {
-      padding: 10px 18px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 12px;
-      border: 3px solid #d1d5db;
+    .verb-card {
       background-color: #ffffff;
-      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #333;
+      box-shadow: 3px 4px 8px rgba(0,0,0,0.15);
       cursor: pointer;
-      outline: none;
-      transition: all 0.2s;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid #ddd;
     }
 
-    select:hover, select:focus {
-      border-color: var(--bg-color);
+    .verb-card:hover {
+      transform: scale(1.1) rotate(0deg) !important;
+      z-index: 10;
+      box-shadow: 5px 8px 15px rgba(0,0,0,0.25);
+      background-color: #fef08a;
     }
 
-    /* Barra de Progreso */
-    .progress-bar-container {
-      width: 100%;
-      height: 12px;
-      background-color: #e5e7eb;
-      border-radius: 10px;
-      margin: 15px 0 25px 0;
-      overflow: hidden;
+    .verb-card.active {
+      background-color: var(--yellow-piece);
+      border: 2px solid var(--yellow-border);
+      transform: scale(1.05) rotate(0deg) !important;
+      z-index: 5;
     }
 
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: var(--green-piece);
-      transition: width 0.3s ease;
+    /* ÁREA DE TRABAJO (CONJUGADOR) */
+    .workspace {
+      background-color: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Grid de Conjugaciones */
+    .verb-header {
+      text-align: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .selected-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .stem-info {
+      font-size: 1.1rem;
+      color: #4b5563;
+      margin-top: 4px;
+    }
+
+    .stem-highlight {
+      background-color: var(--yellow-piece);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    /* GRID DE FILAS DE CONJUGACIÓN */
     .conjugation-grid {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .row {
       display: grid;
-      grid-template-columns: 180px 1fr auto;
+      grid-template-columns: 140px 1fr auto;
       align-items: center;
-      gap: 15px;
+      gap: 10px;
       background-color: #ffffff;
-      padding: 10px 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      opacity: 0;
-      transform: translateY(15px);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .row.visible {
-      opacity: 1;
-      transform: translateY(0);
+      padding: 8px 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .pronoun {
-      font-size: 1.2rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: var(--pronoun-color);
     }
 
-    /* SVG del Rompecabezas */
+    /* PUZZLE SVG */
     .puzzle-box {
-      display: flex;
-      align-items: center;
       cursor: pointer;
     }
 
     .puzzle-svg {
       display: block;
       overflow: visible;
-      filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.15));
-      transition: transform 0.2s ease;
-    }
-
-    .puzzle-box:hover .puzzle-svg {
-      transform: scale(1.02);
+      filter: drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.12));
     }
 
     .text-stem {
       fill: #1f2937;
       font-family: 'Segoe UI', system-ui, sans-serif;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       dominant-baseline: central;
       text-anchor: middle;
     }
@@ -166,28 +182,28 @@
       fill: #ffffff;
       font-family: 'Segoe UI', system-ui, sans-serif;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       dominant-baseline: central;
       text-anchor: middle;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
     }
 
     .text-hidden {
       opacity: 0;
     }
 
-    /* Botón de Audio */
+    /* BOTÓN DE AUDIO */
     .audio-btn {
       background: #f3f4f6;
       border: 2px solid #e5e7eb;
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       transition: all 0.2s;
     }
 
@@ -197,81 +213,48 @@
       transform: scale(1.1);
     }
 
-    /* Flechas Navegación Flotantes */
-    .nav-arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: #ffffff;
-      color: var(--text-main);
-      border: 3px solid var(--text-main);
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      font-size: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-      transition: all 0.2s ease;
-      z-index: 99;
-    }
-
-    .nav-arrow:hover:not(:disabled) {
-      background-color: var(--text-main);
-      color: #ffffff;
-      transform: translateY(-50%) scale(1.15);
-    }
-
-    .nav-arrow:disabled {
-      opacity: 0.2;
-      cursor: not-allowed;
-      border-color: #ccc;
-    }
-
-    .nav-arrow.prev { left: 20px; }
-    .nav-arrow.next { right: 20px; }
-
-    @media (max-width: 768px) {
-      .row { grid-template-columns: 1fr; text-align: center; justify-items: center; }
-      .nav-arrow { position: static; transform: none; width: 50px; height: 50px; }
-      .mobile-nav { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+    @media (max-width: 900px) {
+      .main-layout { grid-template-columns: 1fr; }
+      .desk-area { min-height: auto; }
     }
   </style>
 </head>
 <body>
 
-  <button class="nav-arrow prev" id="prevBtn" onclick="changeRow(-1)" disabled>&#10094;</button>
-  <button class="nav-arrow next" id="nextBtn" onclick="changeRow(1)">&#10095;</button>
+  <h1>Mesa de Verbos Regulares</h1>
+  <div class="subtitle">Haz clic en cualquier papel de la mesa para extraer su raíz y ver la conjugación</div>
 
-  <div class="container">
-    <header>
-      <h1>Conjugador Interactivo</h1>
-      <div class="selector-box">
-        <label for="verbSelect">Selecciona un verbo:</label>
-        <select id="verbSelect" onchange="loadVerb()"></select>
-      </div>
-      <div class="progress-bar-container">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
-    </header>
+  <div class="main-layout">
+    
+    <div class="desk-area" id="deskArea"></div>
 
-    <div class="conjugation-grid" id="conjugationGrid"></div>
+    <div class="workspace">
+      <div class="verb-header">
+        <div class="selected-title" id="selectedVerbTitle">TOCAR</div>
+        <div class="stem-info">Raíz extraída: <span class="stem-highlight" id="selectedStem">TOC-</span></div>
+      </div>
+
+      <div class="conjugation-grid" id="conjugationGrid"></div>
+    </div>
+
   </div>
 
   <script>
-    // Lista completa de verbos clasificados por su terminación (extraídos de la imagen)
+    // Lista ampliada de verbos (incluye TOCAR y muchos otros de las imágenes y nuevos)
     const verbos = [
+      { verbo: "TOCAR", tipo: "AR", raiz: "toc" },
+      { verbo: "TRABAJAR", tipo: "AR", raiz: "trabaj" },
       { verbo: "ESTUDIAR", tipo: "AR", raiz: "estudi" },
       { verbo: "ENSEÑAR", tipo: "AR", raiz: "enseñ" },
       { verbo: "APRENDER", tipo: "ER", raiz: "aprend" },
+      { verbo: "COMPRENDER", tipo: "ER", raiz: "comprend" },
       { verbo: "NECESITAR", tipo: "AR", raiz: "necesit" },
       { verbo: "BEBER", tipo: "ER", raiz: "beb" },
       { verbo: "TOMAR", tipo: "AR", raiz: "tom" },
       { verbo: "COMPRAR", tipo: "AR", raiz: "compr" },
       { verbo: "VENDER", tipo: "ER", raiz: "vend" },
       { verbo: "ESCRIBIR", tipo: "IR", raiz: "escrib" },
+      { verbo: "ABRIR", tipo: "IR", raiz: "abr" },
       { verbo: "ROMPER", tipo: "ER", raiz: "romp" },
       { verbo: "DECIDIR", tipo: "IR", raiz: "decid" },
       { verbo: "OLVIDAR", tipo: "AR", raiz: "olvid" },
@@ -297,69 +280,78 @@
       IR: ["-o", "-es", "-e", "-imos", "-ís", "-en"]
     };
 
-    let currentRow = -1;
-    let currentVerbObj = verbos[0];
+    let selectedVerb = verbos[0];
 
-    // Inicializar desplegable
-    const selectEl = document.getElementById('verbSelect');
-    verbos.forEach((v, index) => {
-      const opt = document.createElement('option');
-      opt.value = index;
-      opt.textContent = `${v.verbo} (-${v.tipo})`;
-      selectEl.appendChild(opt);
-    });
+    // Renderizar la mesa de papeles
+    function renderDesk() {
+      const desk = document.getElementById('deskArea');
+      desk.innerHTML = '';
 
-    function loadVerb() {
-      const index = selectEl.value;
-      currentVerbObj = verbos[index];
-      currentRow = -1;
-      buildGrid();
-      updateVisibility();
+      verbos.forEach((v, index) => {
+        const card = document.createElement('div');
+        card.className = 'verb-card' + (v.verbo === selectedVerb.verbo ? ' active' : '');
+        card.textContent = v.verbo;
+
+        // Generar una rotación aleatoria simular la "mesa desperdigada"
+        const randomRotation = (Math.random() * 20 - 10).toFixed(1); // entre -10deg y 10deg
+        card.style.transform = `rotate(${randomRotation}deg)`;
+
+        card.onclick = () => {
+          selectedVerb = v;
+          renderDesk();
+          updateWorkspace();
+        };
+
+        desk.appendChild(card);
+      });
     }
 
-    function buildGrid() {
+    // Actualizar el conjugador con el verbo elegido
+    function updateWorkspace() {
+      document.getElementById('selectedVerbTitle').textContent = `${selectedVerb.verbo} (-${selectedVerb.tipo})`;
+      document.getElementById('selectedStem').textContent = `${selectedVerb.raiz.toUpperCase()}-`;
+
       const grid = document.getElementById('conjugationGrid');
       grid.innerHTML = '';
 
       pronombres.forEach((pronombre, i) => {
-        const ending = terminaciones[currentVerbObj.tipo][i];
-        const fullWord = currentVerbObj.raiz + ending.replace('-', '');
+        const ending = terminaciones[selectedVerb.tipo][i];
+        const fullWord = selectedVerb.raiz + ending.replace('-', '');
 
         const row = document.createElement('div');
         row.className = 'row';
-        row.dataset.row = i;
 
         row.innerHTML = `
           <div class="pronoun">${pronombre}</div>
           <div class="puzzle-box" onclick="togglePiece(${i})">
-            <svg class="puzzle-svg" width="260" height="55" viewBox="0 0 260 55">
-              <path d="M 5,5 L 120,5 
-                       C 120,15 135,15 135,5 
-                       L 145,5 
-                       A 5,5 0 0,1 150,10 
-                       L 150,20 
-                       C 162,20 162,35 150,35 
-                       L 150,45 
-                       A 5,5 0 0,1 145,50 
-                       L 5,50 
-                       A 5,5 0 0,1 0,45 
-                       L 0,10 
-                       A 5,5 0 0,1 5,5 Z" 
+            <svg class="puzzle-svg" width="240" height="48" viewBox="0 0 240 48">
+              <path d="M 5,4 L 110,4 
+                       C 110,13 123,13 123,4 
+                       L 132,4 
+                       A 4,4 0 0,1 136,8 
+                       L 136,17 
+                       C 146,17 146,30 136,30 
+                       L 136,40 
+                       A 4,4 0 0,1 132,44 
+                       L 5,44 
+                       A 4,4 0 0,1 1,40 
+                       L 1,8 
+                       A 4,4 0 0,1 5,4 Z" 
                     fill="#facc15" stroke="#eab308" stroke-width="2"/>
-              <text x="65" y="28" class="text-stem">${currentVerbObj.raiz}-</text>
+              <text x="60" y="24" class="text-stem">${selectedVerb.raiz}-</text>
 
-              <path d="M 145,5 L 250,5 
-                       A 5,5 0 0,1 255,10 
-                       L 255,45 
-                       A 5,5 0 0,1 250,50 
-                       L 145,50 
-                       A 5,5 0 0,1 140,45 
-                       L 140,35 
-                       C 152,35 152,20 140,20 
-                       L 140,10 
-                       A 5,5 0 0,1 145,5 Z" 
+              <path d="M 132,4 L 230,4 
+                       A 4,4 0 0,1 234,8 
+                       L 234,40 
+                       A 4,4 0 0,1 230,44 
+                       L 132,44 
+                       A 4,4 0 0,1 128,40 
+                       L 128,30 
+                       C 138,30 138,17 128,17 
+                       L 128,8 
+                       A 4,4 0 0,1 132,4 Z" 
                     fill="#22c55e" stroke="#15803d" stroke-width="2"/>
-              <text x="195" y="28" class="text-ending text-hidden" id="ending-${i}">${ending}</text>
+              <text x="180" y="24" class="text-ending text-hidden" id="ending-${i}">${ending}</text>
             </svg>
           </div>
           <button class="audio-btn" title="Escuchar pronunciación" onclick="speak('${pronombre} ${fullWord}')">🔊</button>
@@ -370,41 +362,9 @@
 
     function togglePiece(index) {
       const endingText = document.getElementById(`ending-${index}`);
-      endingText.classList.toggle('text-hidden');
+      if(endingText) endingText.classList.toggle('text-hidden');
     }
 
-    function changeRow(dir) {
-      if (dir === 1 && currentRow < pronombres.length - 1) {
-        currentRow++;
-      } else if (dir === -1 && currentRow >= 0) {
-        // Ocultar la terminación al retroceder
-        const endingText = document.getElementById(`ending-${currentRow}`);
-        if(endingText) endingText.classList.add('text-hidden');
-        currentRow--;
-      }
-      updateVisibility();
-    }
-
-    function updateVisibility() {
-      pronombres.forEach((_, i) => {
-        const row = document.querySelector(`.row[data-row="${i}"]`);
-        if (i <= currentRow) {
-          row.classList.add('visible');
-        } else {
-          row.classList.remove('visible');
-        }
-      });
-
-      // Actualizar flechas
-      document.getElementById('prevBtn').disabled = (currentRow === -1);
-      document.getElementById('nextBtn').disabled = (currentRow === pronombres.length - 1);
-
-      // Actualizar Barra de Progreso
-      const pct = currentRow < 0 ? 0 : ((currentRow + 1) / pronombres.length) * 100;
-      document.getElementById('progressBar').style.width = `${pct}%`;
-    }
-
-    // Pronunciación con API de Voz integrada en navegadores
     function speak(text) {
       if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
@@ -414,8 +374,9 @@
       }
     }
 
-    // Cargar primer verbo al iniciar
-    loadVerb();
+    // Inicializar
+    renderDesk();
+    updateWorkspace();
   </script>
 
 </body>
