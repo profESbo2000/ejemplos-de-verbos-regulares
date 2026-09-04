@@ -46,7 +46,7 @@
       font-size: 1.05rem;
     }
 
-    /* CONTENEDOR PRINCIPAL: MESA Y CONJUGACIÓN */
+    /* CONTENEDOR PRINCIPAL */
     .main-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -55,7 +55,7 @@
       margin: 0 auto;
     }
 
-    /* MESA DE PAPELES DESPERDIGADOS */
+    /* MESA DE PAPELES DESPERDIGADOS CON TARJETAS 3D */
     .desk-area {
       background-color: #a3b18a;
       border: 4px solid #588157;
@@ -64,38 +64,105 @@
       min-height: 550px;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 15px;
       align-content: flex-start;
       justify-content: center;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
     }
 
-    .verb-card {
-      background-color: #ffffff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      color: #333;
-      box-shadow: 3px 4px 8px rgba(0,0,0,0.15);
+    .card-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-container {
+      width: 110px;
+      height: 110px;
+      perspective: 1000px;
       cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 12px;
+    }
+
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-container.active .card-front,
+    .card-container.active .card-back {
+      border: 3px solid #ff5252;
+      box-shadow: 0 0 12px rgba(255, 82, 82, 0.8);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       user-select: none;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border: 1px solid #ddd;
     }
 
-    .verb-card:hover {
-      transform: scale(1.1) rotate(0deg) !important;
-      z-index: 10;
-      box-shadow: 5px 8px 15px rgba(0,0,0,0.25);
-      background-color: #fef08a;
+    .card-front {
+      background-color: #ffffff;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: 2px solid #cbd5e1;
     }
 
-    .verb-card.active {
-      background-color: var(--yellow-piece);
-      border: 2px solid var(--yellow-border);
-      transform: scale(1.05) rotate(0deg) !important;
-      z-index: 5;
+    .card-back {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      transform: rotateY(180deg);
+      border: 2px solid #cbd5e1;
+      overflow: hidden;
+    }
+
+    .card-back-icon {
+      font-size: 1.8rem;
+      margin-bottom: 2px;
+    }
+
+    .card-back-text {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-transform: uppercase;
+    }
+
+    .select-btn {
+      background-color: #ff793f;
+      color: #ffffff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .select-btn:hover {
+      background-color: #ff5252;
     }
 
     /* ÁREA DE TRABAJO (CONJUGADOR) */
@@ -222,7 +289,7 @@
 <body>
 
   <h1>Mesa de Verbos Regulares</h1>
-  <div class="subtitle">Haz clic en cualquier papel de la mesa para extraer su raíz y ver la conjugación</div>
+  <div class="subtitle">Haz clic en cualquier tarjeta para ver su traducción en inglés o presiona "Conjugar"</div>
 
   <div class="main-layout">
     
@@ -240,36 +307,36 @@
   </div>
 
   <script>
-    // Lista ampliada de verbos (incluye TOCAR y muchos otros de las imágenes y nuevos)
+    // Lista de verbos regulares con icono y traducción en inglés
     const verbos = [
-      { verbo: "TOCAR", tipo: "AR", raiz: "toc" },
-      { verbo: "TRABAJAR", tipo: "AR", raiz: "trabaj" },
-      { verbo: "ESTUDIAR", tipo: "AR", raiz: "estudi" },
-      { verbo: "ENSEÑAR", tipo: "AR", raiz: "enseñ" },
-      { verbo: "APRENDER", tipo: "ER", raiz: "aprend" },
-      { verbo: "COMPRENDER", tipo: "ER", raiz: "comprend" },
-      { verbo: "NECESITAR", tipo: "AR", raiz: "necesit" },
-      { verbo: "BEBER", tipo: "ER", raiz: "beb" },
-      { verbo: "TOMAR", tipo: "AR", raiz: "tom" },
-      { verbo: "COMPRAR", tipo: "AR", raiz: "compr" },
-      { verbo: "VENDER", tipo: "ER", raiz: "vend" },
-      { verbo: "ESCRIBIR", tipo: "IR", raiz: "escrib" },
-      { verbo: "ABRIR", tipo: "IR", raiz: "abr" },
-      { verbo: "ROMPER", tipo: "ER", raiz: "romp" },
-      { verbo: "DECIDIR", tipo: "IR", raiz: "decid" },
-      { verbo: "OLVIDAR", tipo: "AR", raiz: "olvid" },
-      { verbo: "AYUDAR", tipo: "AR", raiz: "ayud" },
-      { verbo: "CANTAR", tipo: "AR", raiz: "cant" },
-      { verbo: "BUSCAR", tipo: "AR", raiz: "busc" },
-      { verbo: "DESAYUNAR", tipo: "AR", raiz: "desayun" },
-      { verbo: "ESPERAR", tipo: "AR", raiz: "esper" },
-      { verbo: "LLAMAR", tipo: "AR", raiz: "llam" },
-      { verbo: "VIAJAR", tipo: "AR", raiz: "viaj" },
-      { verbo: "BAILAR", tipo: "AR", raiz: "bail" },
-      { verbo: "COCINAR", tipo: "AR", raiz: "cocin" },
-      { verbo: "LEER", tipo: "ER", raiz: "le" },
-      { verbo: "PARTIR", tipo: "IR", raiz: "part" },
-      { verbo: "PAGAR", tipo: "AR", raiz: "pag" }
+      { verbo: "TOCAR", ingles: "To Touch / Play", tipo: "AR", raiz: "toc", icono: "🎸" },
+      { verbo: "TRABAJAR", ingles: "To Work", tipo: "AR", raiz: "trabaj", icono: "💼" },
+      { verbo: "ESTUDIAR", ingles: "To Study", tipo: "AR", raiz: "estudi", icono: "📚" },
+      { verbo: "ENSEÑAR", ingles: "To Teach", tipo: "AR", raiz: "enseñ", icono: "🏫" },
+      { verbo: "APRENDER", ingles: "To Learn", tipo: "ER", raiz: "aprend", icono: "🧠" },
+      { verbo: "COMPRENDER", ingles: "To Understand", tipo: "ER", raiz: "comprend", icono: "💡" },
+      { verbo: "NECESITAR", ingles: "To Need", tipo: "AR", raiz: "necesit", icono: "🆘" },
+      { verbo: "BEBER", ingles: "To Drink", tipo: "ER", raiz: "beb", icono: "🥤" },
+      { verbo: "TOMAR", ingles: "To Take / Drink", tipo: "AR", raiz: "tom", icono: "☕" },
+      { verbo: "COMPRAR", ingles: "To Buy", tipo: "AR", raiz: "compr", icono: "🛒" },
+      { verbo: "VENDER", ingles: "To Sell", tipo: "ER", raiz: "vend", icono: "🏷️" },
+      { verbo: "ESCRIBIR", ingles: "To Write", tipo: "IR", raiz: "escrib", icono: "✍️" },
+      { verbo: "ABRIR", ingles: "To Open", tipo: "IR", raiz: "abr", icono: "🔓" },
+      { verbo: "ROMPER", ingles: "To Break", tipo: "ER", raiz: "romp", icono: "💔" },
+      { verbo: "DECIDIR", ingles: "To Decide", tipo: "IR", raiz: "decid", icono: "🤔" },
+      { verbo: "OLVIDAR", ingles: "To Forget", tipo: "AR", raiz: "olvid", icono: "🤷" },
+      { verbo: "AYUDAR", ingles: "To Help", tipo: "AR", raiz: "ayud", icono: "🤝" },
+      { verbo: "CANTAR", ingles: "To Sing", tipo: "AR", raiz: "cant", icono: "🎤" },
+      { verbo: "BUSCAR", ingles: "To Look For", tipo: "AR", raiz: "busc", icono: "🔍" },
+      { verbo: "DESAYUNAR", ingles: "To Eat Breakfast", tipo: "AR", raiz: "desayun", icono: "🍳" },
+      { verbo: "ESPERAR", ingles: "To Wait / Hope", tipo: "AR", raiz: "esper", icono: "⏳" },
+      { verbo: "LLAMAR", ingles: "To Call", tipo: "AR", raiz: "llam", icono: "📞" },
+      { verbo: "VIAJAR", ingles: "To Travel", tipo: "AR", raiz: "viaj", icono: "✈️" },
+      { verbo: "BAILAR", ingles: "To Dance", tipo: "AR", raiz: "bail", icono: "💃" },
+      { verbo: "COCINAR", ingles: "To Cook", tipo: "AR", raiz: "cocin", icono: "🍳" },
+      { verbo: "LEER", ingles: "To Read", tipo: "ER", raiz: "le", icono: "📖" },
+      { verbo: "PARTIR", ingles: "To Leave / Split", tipo: "IR", raiz: "part", icono: "🚀" },
+      { verbo: "PAGAR", ingles: "To Pay", tipo: "AR", raiz: "pag", icono: "💳" }
     ];
 
     const pronombres = ["Yo", "Tú", "Él / Ella / Usted", "Nosotros/as", "Vosotros/as", "Ellos / Ellas / Ustedes"];
@@ -282,27 +349,49 @@
 
     let selectedVerb = verbos[0];
 
-    // Renderizar la mesa de papeles
+    // Renderizar las tarjetas giratorias en la mesa
     function renderDesk() {
       const desk = document.getElementById('deskArea');
       desk.innerHTML = '';
 
-      verbos.forEach((v, index) => {
-        const card = document.createElement('div');
-        card.className = 'verb-card' + (v.verbo === selectedVerb.verbo ? ' active' : '');
-        card.textContent = v.verbo;
+      verbos.forEach((v) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'card-wrapper';
 
-        // Generar una rotación aleatoria simular la "mesa desperdigada"
-        const randomRotation = (Math.random() * 20 - 10).toFixed(1); // entre -10deg y 10deg
-        card.style.transform = `rotate(${randomRotation}deg)`;
+        const container = document.createElement('div');
+        container.className = 'card-container' + (v.verbo === selectedVerb.verbo ? ' active' : '');
 
-        card.onclick = () => {
+        container.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front">
+              <span>${v.verbo}</span>
+            </div>
+            <div class="card-back">
+              <span class="card-back-icon">${v.icono}</span>
+              <span class="card-back-text">${v.ingles}</span>
+            </div>
+          </div>
+        `;
+
+        // Girar la tarjeta al hacer clic en ella
+        container.onclick = () => {
+          container.classList.toggle('flipped');
+        };
+
+        // Botón dedicado para cargar la conjugación
+        const selectBtn = document.createElement('button');
+        selectBtn.className = 'select-btn';
+        selectBtn.textContent = 'Conjugar';
+        selectBtn.onclick = (e) => {
+          e.stopPropagation();
           selectedVerb = v;
           renderDesk();
           updateWorkspace();
         };
 
-        desk.appendChild(card);
+        wrapper.appendChild(container);
+        wrapper.appendChild(selectBtn);
+        desk.appendChild(wrapper);
       });
     }
 
