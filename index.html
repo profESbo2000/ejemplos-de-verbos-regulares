@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script>
+  (function pedirClave() {
+    // 🔑 Escribe aquí la contraseña para tus alumnos:
+    const CLAVE_CORRECTA = "ELE2026"; 
+
+    // Comprueba si ya ingresó la clave en esta sesión del navegador
+    if (sessionStorage.getItem("acceso_autorizado") !== "true") {
+      let intento = prompt("🔒 ACTIVIDAD PROTEGIDA\nIngresa la contraseña proporcionada por tu profesor:");
+
+      if (intento === CLAVE_CORRECTA) {
+        sessionStorage.setItem("acceso_autorizado", "true");
+      } else {
+        alert("❌ Contraseña incorrecta. Contacta a tu profesor.");
+        document.write(`
+          <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+            <h2>Acceso Restringido 🔒</h2>
+            <p>Esta actividad es exclusiva para estudiantes registrados.</p>
+            <button onclick="location.reload()">Intentar de nuevo</button>
+          </div>
+        `);
+        window.stop(); // Cancela la carga del resto de la página
+      }
+    }
+  })();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesa de Verbos Regulares - Rompecabezas Interactivo</title>
